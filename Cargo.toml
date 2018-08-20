@@ -1,0 +1,27 @@
+[package]
+name = "dotclock"
+version = "0.1.0"
+authors = ["Adam Lusch <alusch@gmail.com>"]
+description = "Command-line tool to show a clock on a Luminator display"
+license = "MIT"
+repository = "https://github.com/alusch/flipdot"
+readme = "README.md"
+keywords = ["clock", "flip-dot", "Luminator", "bus", "sign"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+bdf = "0.5.5"
+chrono = "0.4.5"
+clap = "2.32.0"
+env_logger = "0.5.12"
+failure = "0.1.2"
+serial = "0.4.0"
+timer = "0.2.0"
+
+flipdot = { version = "0.3", git = "https://github.com/alusch/flipdot" }
+flipdot-testing = { version = "0.3", git = "https://github.com/alusch/flipdot" }
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
