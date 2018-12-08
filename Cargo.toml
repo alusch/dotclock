@@ -8,6 +8,7 @@ repository = "https://github.com/alusch/flipdot"
 readme = "README.md"
 keywords = ["clock", "flip-dot", "Luminator", "bus", "sign"]
 categories = ["command-line-utilities"]
+edition = "2018"
 
 [dependencies]
 bdf = "0.5.5"

@@ -1,14 +1,3 @@
-extern crate bdf;
-extern crate chrono;
-#[macro_use]
-extern crate clap;
-extern crate env_logger;
-extern crate failure;
-extern crate flipdot;
-extern crate flipdot_testing;
-extern crate serial;
-extern crate timer;
-
 use std::cell::RefCell;
 use std::iter;
 use std::process;
@@ -17,7 +6,7 @@ use std::sync::mpsc::channel;
 
 use bdf::Font;
 use chrono::{Local, Timelike};
-use clap::{App, Arg, ArgGroup, ArgMatches};
+use clap::{crate_authors, crate_version, App, Arg, ArgGroup, ArgMatches};
 use failure::{Error, ResultExt};
 use flipdot::{Address, Page, PageId, SerialSignBus, Sign, SignBus, SignType};
 use flipdot_testing::{VirtualSign, VirtualSignBus};
@@ -67,7 +56,7 @@ fn run() -> Result<(), Error> {
     Ok(())
 }
 
-fn show_clock(bus: Rc<RefCell<SignBus>>, matches: &ArgMatches) -> Result<(), Error> {
+fn show_clock(bus: Rc<RefCell<dyn SignBus>>, matches: &ArgMatches<'_>) -> Result<(), Error> {
     // Load up resources and parse BDF fonts.
     const MAIN_FONT_DATA: &[u8] = include_bytes!("fonts/main.bdf");
     const AM_PM_FONT_DATA: &[u8] = include_bytes!("fonts/am_pm.bdf");
@@ -135,7 +124,7 @@ fn show_clock(bus: Rc<RefCell<SignBus>>, matches: &ArgMatches) -> Result<(), Err
 /// Glyphs not present in `font` are ignored. Panics if it exceeds the dimensions of the page
 /// (font is too tall or string is too long). Everything is top-aligned on the assumption
 /// that the font will match the height of the page.
-fn write_string(string: &str, font: &Font, page: &mut Page, x_start: u32) -> u32 {
+fn write_string(string: &str, font: &Font, page: &mut Page<'_>, x_start: u32) -> u32 {
     let mut x_offset = x_start;
     for codepoint in string.chars() {
         if let Some(glyph) = font.glyphs().get(&codepoint) {
