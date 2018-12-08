@@ -50,7 +50,7 @@ fn run() -> Result<(), Error> {
     if matches.is_present("serial") {
         let port_name = matches.value_of("serial").unwrap();
         let port = serial::open(&port_name).context("Failed to open serial port")?;
-        let bus = SerialSignBus::new(port).context("Failed to create bus")?;
+        let bus = SerialSignBus::try_new(port).context("Failed to create bus")?;
         show_clock(Rc::new(RefCell::new(bus)), &matches)?;
     } else if matches.is_present("virtual") {
         let bus = VirtualSignBus::new(iter::once(VirtualSign::new(Address(3))));
