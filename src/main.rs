@@ -25,23 +25,27 @@ fn run() -> Result<(), Error> {
                 .long("24hour")
                 .global(true)
                 .help("Use 24-hour time formatting"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("serial")
                 .short("s")
                 .long("serial")
                 .help("Connects to a real sign over the specified serial port")
                 .takes_value(true)
                 .value_name("PORT"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("virtual")
                 .short("v")
                 .long("virtual")
                 .help("Uses a virtual sign for testing (set RUST_LOG to view output)"),
-        ).group(
+        )
+        .group(
             ArgGroup::with_name("mode")
                 .args(&["serial", "virtual"])
                 .required(true),
-        ).get_matches();
+        )
+        .get_matches();
 
     if matches.is_present("serial") {
         let port_name = matches.value_of("serial").unwrap();
