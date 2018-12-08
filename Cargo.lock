@@ -106,6 +106,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive_more"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "proc-macro2 0.4.24 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 0.15.22 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "dotclock"
 version = "0.1.0"
 dependencies = [
@@ -114,8 +125,8 @@ dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "flipdot 0.3.0 (git+https://github.com/alusch/flipdot)",
- "flipdot-testing 0.3.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot 0.4.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot-testing 0.4.0 (git+https://github.com/alusch/flipdot)",
  "serial 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "timer 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -154,50 +165,45 @@ dependencies = [
 
 [[package]]
 name = "flipdot"
-version = "0.3.0"
-source = "git+https://github.com/alusch/flipdot#bc54163a694727f6f5ea84415f5457c372590425"
+version = "0.4.0"
+source = "git+https://github.com/alusch/flipdot#eeea7db28efbd7530c2084fbd3d267f503ce12cc"
 dependencies = [
  "failure 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "flipdot-core 0.3.0 (git+https://github.com/alusch/flipdot)",
- "flipdot-serial 0.3.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot-core 0.4.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot-serial 0.4.0 (git+https://github.com/alusch/flipdot)",
 ]
 
 [[package]]
 name = "flipdot-core"
-version = "0.3.0"
-source = "git+https://github.com/alusch/flipdot#bc54163a694727f6f5ea84415f5457c372590425"
+version = "0.4.0"
+source = "git+https://github.com/alusch/flipdot#eeea7db28efbd7530c2084fbd3d267f503ce12cc"
 dependencies = [
+ "derive_more 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "macro-attr 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "newtype_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "num-traits 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "flipdot-serial"
-version = "0.3.0"
-source = "git+https://github.com/alusch/flipdot#bc54163a694727f6f5ea84415f5457c372590425"
+version = "0.4.0"
+source = "git+https://github.com/alusch/flipdot#eeea7db28efbd7530c2084fbd3d267f503ce12cc"
 dependencies = [
  "failure 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "flipdot-core 0.3.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot-core 0.4.0 (git+https://github.com/alusch/flipdot)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "serial-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "flipdot-testing"
-version = "0.3.0"
-source = "git+https://github.com/alusch/flipdot#bc54163a694727f6f5ea84415f5457c372590425"
+version = "0.4.0"
+source = "git+https://github.com/alusch/flipdot#eeea7db28efbd7530c2084fbd3d267f503ce12cc"
 dependencies = [
  "failure 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "flipdot-core 0.3.0 (git+https://github.com/alusch/flipdot)",
- "flipdot-serial 0.3.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot-core 0.4.0 (git+https://github.com/alusch/flipdot)",
+ "flipdot-serial 0.4.0 (git+https://github.com/alusch/flipdot)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "serial-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -237,11 +243,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "macro-attr"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
 name = "memchr"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -249,14 +250,6 @@ dependencies = [
  "cfg-if 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.44 (registry+https://github.com/rust-lang/crates.io-index)",
  "version_check 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "newtype_derive"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "rustc_version 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -333,15 +326,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rustc_version"
-version = "0.1.7"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "semver 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)",
+ "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "semver"
-version = "0.1.20"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "semver-parser"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -548,21 +549,20 @@ dependencies = [
 "checksum cfg-if 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "082bb9b28e00d3c9d39cc03e64ce4cea0f1bb9b3fde493f0cbc008472d22bdf4"
 "checksum chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = "45912881121cb26fad7c38c17ba7daa18764771836b34fab7d3fbd93ed633878"
 "checksum clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b957d88f4b6a63b9d70d5f454ac8011819c6efa7727858f458ab71c756ce2d3e"
+"checksum derive_more 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3f57d78cf3bd45270dad4e70c21ec77a960b36c7a841ff9db76aaa775a8fb871"
 "checksum env_logger 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)" = "afb070faf94c85d17d50ca44f6ad076bce18ae92f0037d350947240a36e9d42e"
 "checksum failure 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "6dd377bcc1b1b7ce911967e3ec24fa19c3224394ec05b54aa7b083d498341ac7"
 "checksum failure_derive 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "64c2d913fe8ed3b6c6518eedf4538255b989945c14c2a7d5cbff62a5e2120596"
-"checksum flipdot 0.3.0 (git+https://github.com/alusch/flipdot)" = "<none>"
-"checksum flipdot-core 0.3.0 (git+https://github.com/alusch/flipdot)" = "<none>"
-"checksum flipdot-serial 0.3.0 (git+https://github.com/alusch/flipdot)" = "<none>"
-"checksum flipdot-testing 0.3.0 (git+https://github.com/alusch/flipdot)" = "<none>"
+"checksum flipdot 0.4.0 (git+https://github.com/alusch/flipdot)" = "<none>"
+"checksum flipdot-core 0.4.0 (git+https://github.com/alusch/flipdot)" = "<none>"
+"checksum flipdot-serial 0.4.0 (git+https://github.com/alusch/flipdot)" = "<none>"
+"checksum flipdot-testing 0.4.0 (git+https://github.com/alusch/flipdot)" = "<none>"
 "checksum humantime 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3ca7e5f2e110db35f93b837c81797f3714500b81d517bf20c431b16d3ca4f114"
 "checksum ioctl-rs 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "f7970510895cee30b3e9128319f2cefd4bde883a39f38baa279567ba3a7eb97d"
 "checksum lazy_static 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a374c89b9db55895453a74c1e38861d9deec0b01b405a82516e9d5de4820dea1"
 "checksum libc 0.2.44 (registry+https://github.com/rust-lang/crates.io-index)" = "10923947f84a519a45c8fefb7dd1b3e8c08747993381adee176d7a82b4195311"
 "checksum log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = "c84ec4b527950aa83a329754b01dbe3f58361d1c5efacd1f6d68c494d08a17c6"
-"checksum macro-attr 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "00e51c6f0e2bf862b01b3d784fc32b02feb248a69062c51fb0b6d14cd526cc2a"
 "checksum memchr 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "0a3eb002f0535929f1199681417029ebea04aadc0c7a4224b46be99c7f5d6a16"
-"checksum newtype_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "ac8cd24d9f185bb7223958d8c1ff7a961b74b1953fd05dba7cc568a63b3861ec"
 "checksum num-integer 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)" = "e83d528d2677f0518c570baf2b7abdcf0cd2d248860b68507bdcb3e91d4c0cea"
 "checksum num-traits 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "0b3a5d7cc97d6d30d8b9bc8fa19bf45349ffe46241e8816f50f62f6d6aaabee1"
 "checksum proc-macro2 0.4.24 (registry+https://github.com/rust-lang/crates.io-index)" = "77619697826f31a02ae974457af0b29b723e5619e113e9397b8b82c6bd253f09"
@@ -573,8 +573,9 @@ dependencies = [
 "checksum regex 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "37e7cbbd370869ce2e8dff25c7018702d10b21a20ef7135316f8daecd6c25b7f"
 "checksum regex-syntax 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)" = "4e47a2ed29da7a9e1960e1639e7a982e6edc6d49be308a3b02daf511504a16d1"
 "checksum rustc-demangle 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)" = "bcfe5b13211b4d78e5c2cadfebd7769197d95c639c35a50057eb4c05de811395"
-"checksum rustc_version 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "c5f5376ea5e30ce23c03eb77cbe4962b988deead10910c372b226388b594c084"
-"checksum semver 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)" = "d4f410fedcf71af0345d7607d246e7ad15faaadd49d240ee3b24e5dc21a820ac"
+"checksum rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "138e3e0acb6c9fb258b19b67cb8abd63c00679d2851805ea151465464fe9030a"
+"checksum semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1d7eb9ef2c18661902cc47e535f9bc51b78acd254da71d375c2f6720d9a40403"
+"checksum semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
 "checksum serial 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a1237a96570fc377c13baa1b88c7589ab66edced652e43ffb17088f003db3e86"
 "checksum serial-core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3f46209b345401737ae2125fe5b19a77acce90cd53e1658cda928e4fe9a64581"
 "checksum serial-unix 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f03fbca4c9d866e24a459cbca71283f545a37f8e3e002ad8c70593871453cab7"
