@@ -1,6 +1,6 @@
 [package]
 name = "dotclock"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Adam Lusch <alusch@gmail.com>"]
 description = "Command-line tool to show a clock on a Luminator display"
 license = "MIT"
@@ -12,15 +12,15 @@ edition = "2018"
 
 [dependencies]
 bdf = "0.5.5"
-chrono = "0.4.6"
-clap = "2.32.0"
-env_logger = "0.6.0"
-failure = "0.1.3"
+chrono = "0.4.11"
+clap = "2.33.0"
+env_logger = "0.7.1"
+failure = "0.1.7"
 serial = "0.4.0"
 timer = "0.2.0"
 
-flipdot = { version = "0.4", git = "https://github.com/alusch/flipdot" }
-flipdot-testing = { version = "0.4", git = "https://github.com/alusch/flipdot" }
+flipdot = { version = "0.5", git = "https://github.com/alusch/flipdot" }
+flipdot-testing = { version = "0.5", git = "https://github.com/alusch/flipdot" }
 
 [profile.release]
 lto = true
