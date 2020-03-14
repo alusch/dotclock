@@ -1,18 +1,17 @@
 use std::cell::RefCell;
 use std::iter;
-use std::process;
 use std::rc::Rc;
 use std::sync::mpsc::channel;
 
+use anyhow::{Context, Result};
 use bdf::Font;
 use chrono::{Local, Timelike};
 use clap::{crate_authors, crate_version, App, Arg, ArgGroup, ArgMatches};
-use failure::{Error, ResultExt};
 use flipdot::{Address, Page, PageId, SerialSignBus, Sign, SignBus, SignType};
 use flipdot_testing::{VirtualSign, VirtualSignBus};
 use timer::MessageTimer;
 
-fn run() -> Result<(), Error> {
+fn main() -> Result<()> {
     env_logger::init();
 
     let matches = App::new("Flip-Dot Clock")
@@ -60,7 +59,7 @@ fn run() -> Result<(), Error> {
     Ok(())
 }
 
-fn show_clock(bus: Rc<RefCell<dyn SignBus>>, matches: &ArgMatches<'_>) -> Result<(), Error> {
+fn show_clock(bus: Rc<RefCell<dyn SignBus>>, matches: &ArgMatches<'_>) -> Result<()> {
     // Load up resources and parse BDF fonts.
     const MAIN_FONT_DATA: &[u8] = include_bytes!("fonts/main.bdf");
     const AM_PM_FONT_DATA: &[u8] = include_bytes!("fonts/am_pm.bdf");
@@ -141,18 +140,4 @@ fn write_string(string: &str, font: &Font, page: &mut Page<'_>, x_start: u32) ->
         }
     }
     x_offset
-}
-
-fn main() {
-    match run() {
-        Ok(_) => process::exit(0),
-        Err(ref e) => {
-            let headings = iter::once("Error").chain(iter::repeat("Caused by"));
-            for (heading, failure) in headings.zip(e.iter_chain()) {
-                eprintln!("{}: {}", heading, failure);
-            }
-            eprintln!("{:?}", e.backtrace());
-            process::exit(1);
-        }
-    }
 }

@@ -11,6 +11,7 @@ categories = ["command-line-utilities"]
 edition = "2018"
 
 [dependencies]
+anyhow = "1.0.26"
 bdf = "0.5.5"
 chrono = "0.4.11"
 clap = "2.33.0"
