@@ -6,60 +6,41 @@ use std::sync::mpsc::channel;
 use anyhow::{Context, Result};
 use bdf::Font;
 use chrono::{Local, Timelike};
-use clap::{crate_authors, crate_version, App, Arg, ArgGroup, ArgMatches};
 use flipdot::{Address, Page, PageId, SerialSignBus, Sign, SignBus, SignType};
 use flipdot_testing::{VirtualSign, VirtualSignBus};
+use structopt::StructOpt;
 use timer::MessageTimer;
+
+#[derive(StructOpt, Debug)]
+#[structopt(about, author)]
+struct Opts {
+    /// Serial port to use to connect to a real sign. Pass "virtual" to use a virtual sign
+    /// for testing (set environment variable RUST_LOG=flipdot=info to view output).
+    port: String,
+
+    /// Uses 24-hour time formatting (14:30 instead of 2:30 PM)
+    #[structopt(short = "t", long = "24hour")]
+    use_24_hour: bool,
+}
 
 fn main() -> Result<()> {
     env_logger::init();
 
-    let matches = App::new("Flip-Dot Clock")
-        .version(crate_version!())
-        .author(crate_authors!())
-        .about("Displays a clock on a Luminator flip-dot sign")
-        .arg(
-            Arg::with_name("24hour")
-                .short("t")
-                .long("24hour")
-                .global(true)
-                .help("Use 24-hour time formatting"),
-        )
-        .arg(
-            Arg::with_name("serial")
-                .short("s")
-                .long("serial")
-                .help("Connects to a real sign over the specified serial port")
-                .takes_value(true)
-                .value_name("PORT"),
-        )
-        .arg(
-            Arg::with_name("virtual")
-                .short("v")
-                .long("virtual")
-                .help("Uses a virtual sign for testing (set RUST_LOG to view output)"),
-        )
-        .group(
-            ArgGroup::with_name("mode")
-                .args(&["serial", "virtual"])
-                .required(true),
-        )
-        .get_matches();
-
-    if matches.is_present("serial") {
-        let port_name = matches.value_of("serial").unwrap();
-        let port = serial::open(&port_name).context("Failed to open serial port")?;
-        let bus = SerialSignBus::try_new(port).context("Failed to create bus")?;
-        show_clock(Rc::new(RefCell::new(bus)), &matches)?;
-    } else if matches.is_present("virtual") {
+    let opts = Opts::from_args();
+    if opts.port.eq_ignore_ascii_case("virtual") {
         let bus = VirtualSignBus::new(iter::once(VirtualSign::new(Address(3))));
-        show_clock(Rc::new(RefCell::new(bus)), &matches)?;
+        show_clock(Rc::new(RefCell::new(bus)), opts.use_24_hour)?;
+    } else {
+        let port = serial::open(&opts.port)
+            .context(format!("Failed to open serial port `{}`", &opts.port))?;
+        let bus = SerialSignBus::try_new(port).context("Failed to create bus")?;
+        show_clock(Rc::new(RefCell::new(bus)), opts.use_24_hour)?;
     }
 
     Ok(())
 }
 
-fn show_clock(bus: Rc<RefCell<dyn SignBus>>, matches: &ArgMatches<'_>) -> Result<()> {
+fn show_clock(bus: Rc<RefCell<dyn SignBus>>, use_24_hour: bool) -> Result<()> {
     // Load up resources and parse BDF fonts.
     const MAIN_FONT_DATA: &[u8] = include_bytes!("fonts/main.bdf");
     const AM_PM_FONT_DATA: &[u8] = include_bytes!("fonts/am_pm.bdf");
@@ -99,7 +80,7 @@ fn show_clock(bus: Rc<RefCell<dyn SignBus>>, matches: &ArgMatches<'_>) -> Result
         // Format the current time into string(s) and write to the page using BDF fonts.
         // This is all very specific to fitting nicely on the 90 x 7 sign.
         // TODO: Think about ways to clean up/generalize this.
-        if matches.is_present("24hour") {
+        if use_24_hour {
             let time = now.format("%H:%M").to_string();
             let date = now.format(" %b\u{2009}%d").to_string().to_uppercase();
             let mut x_pos = 7;

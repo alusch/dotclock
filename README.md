@@ -9,15 +9,15 @@ At the moment, it's really only *my* Luminator display (a MAX3000 90 × 7 side s
 The most common "real-world" usage is
 
 ```
-./dotclock --serial /dev/ttyUSB0
+./dotclock /dev/ttyUSB0
 ```
 
 which will attempt communication with an actual sign over the specified serial port. You can use the `-t` or `--24hour` switches to display a 24-hour representation instead of the default 12-hour.
 
-For testing purposes, you can also use the `-v` or `--virtual` switches to fake communication with a virtual sign instead. This doesn't actually print anything to the console without enabling the `RUST_LOG` environment variable. Example:
+For testing purposes, you can pass `virtual` as the port name to fake communication with a virtual sign instead. This doesn't actually print anything to the console without enabling the `RUST_LOG` environment variable. Example:
 
 ```
-RUST_LOG=flipdot=info ./dotclock -v
+RUST_LOG=flipdot=info ./dotclock virtual
 ```
 
 ## License
