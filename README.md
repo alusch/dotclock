@@ -1,5 +1,7 @@
 # dotclock
 
+![Build status](https://github.com/alusch/flipdot/workflows/build/badge.svg)
+
 Command-line tool to show a clock on a Luminator display, written in Rust.
 
 At the moment, it's really only *my* Luminator display (a MAX3000 90 × 7 side sign at address 3), but it would be relatively easy to extend to different types of signs. If nothing else, it's a good example of how to use my [flipdot](https://github.com/alusch/flipdot) crate to do something useful.
