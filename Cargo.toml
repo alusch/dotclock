@@ -11,12 +11,12 @@ categories = ["command-line-utilities"]
 edition = "2018"
 
 [dependencies]
-anyhow = "1.0.31"
-bdf = "0.5.5"
-chrono = "0.4.11"
-env_logger = "0.7.1"
+anyhow = "1.0.34"
+bdf = "0.6.0"
+chrono = "0.4.19"
+env_logger = "0.8.2"
 serial = "0.4.0"
-structopt = "0.3.15"
+structopt = "0.3.20"
 timer = "0.2.0"
 
 flipdot = { version = "0.6", git = "https://github.com/alusch/flipdot" }
