@@ -8,17 +8,17 @@ repository = "https://github.com/alusch/flipdot"
 readme = "README.md"
 keywords = ["clock", "flip-dot", "Luminator", "bus", "sign"]
 categories = ["command-line-utilities"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-anyhow = "1.0.38"
+anyhow = "1.0.44"
 bdf = "0.6.0"
 chrono = "0.4.19"
-env_logger = "0.8.3"
+env_logger = "0.9.0"
 flipdot = "0.6.0"
 flipdot-testing = "0.6.0"
 serial = "0.4.0"
-structopt = "0.3.21"
+structopt = "0.3.25"
 timer = "0.2.0"
 
 [profile.release]
