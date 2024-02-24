@@ -15,8 +15,8 @@ anyhow = "1.0.38"
 bdf = "0.6.0"
 chrono = "0.4.19"
 env_logger = "0.8.3"
-flipdot = "0.6.0"
-flipdot-testing = "0.6.0"
+flipdot = { git = "https://github.com/alusch/flipdot.git", branch = "test-unknown-status" }
+flipdot-testing = { git = "https://github.com/alusch/flipdot.git", branch = "test-unknown-status" }
 serial = "0.4.0"
 structopt = "0.3.21"
 timer = "0.2.0"
