@@ -6,7 +6,7 @@ use std::sync::mpsc::channel;
 use anyhow::{Context, Result};
 use bdf::Font;
 use chrono::{Local, Timelike};
-use flipdot::{Address, Page, PageId, SerialSignBus, Sign, SignBus, SignType};
+use flipdot::{Address, Page, PageFlipStyle, PageId, SerialSignBus, Sign, SignBus, SignType};
 use flipdot_testing::{VirtualSign, VirtualSignBus};
 use structopt::StructOpt;
 use timer::MessageTimer;
@@ -28,7 +28,10 @@ fn main() -> Result<()> {
 
     let opts = Opts::from_args();
     if opts.port.eq_ignore_ascii_case("virtual") {
-        let bus = VirtualSignBus::new(iter::once(VirtualSign::new(Address(3))));
+        let bus = VirtualSignBus::new(iter::once(VirtualSign::new(
+            Address(3),
+            PageFlipStyle::Manual,
+        )));
         show_clock(Rc::new(RefCell::new(bus)), opts.use_24_hour)?;
     } else {
         let port = serial::open(&opts.port)
@@ -96,8 +99,9 @@ fn show_clock(bus: Rc<RefCell<dyn SignBus>>, use_24_hour: bool) -> Result<()> {
             write_string(&date, &main_font, &mut page, x_pos);
         }
 
-        sign.send_pages(&[page]).context("Failed to send page")?;
-        sign.show_loaded_page().context("Failed to show page")?;
+        if sign.send_pages(&[page]).context("Failed to send page")? == PageFlipStyle::Manual {
+            sign.show_loaded_page().context("Failed to show page")?;
+        }
     }
 }
 
