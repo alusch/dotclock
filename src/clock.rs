@@ -1,14 +1,7 @@
-use std::cell::RefCell;
-use std::iter;
-use std::rc::Rc;
-
 use anyhow::{Context, Result};
 use bdf::Font;
 use chrono::Local;
-use flipdot::{Address, Page, PageId, SerialSignBus, Sign, SignBus, SignType};
-use flipdot_testing::{VirtualSign, VirtualSignBus};
-
-use crate::options::Options;
+use flipdot::{Page, PageId, Sign};
 
 #[derive(Debug)]
 pub struct Fonts {
@@ -19,9 +12,10 @@ pub struct Fonts {
 
 #[derive(Debug)]
 pub struct Clock {
-    options: Options,
-    fonts: Fonts,
     sign: Sign,
+    fonts: Fonts,
+    use_24_hour: bool,
+    show_day_of_week: bool,
 }
 
 impl Fonts {
@@ -39,27 +33,12 @@ impl Fonts {
 }
 
 impl Clock {
-    pub fn try_new(options: Options) -> Result<Self> {
-        let bus_rc: Rc<RefCell<dyn SignBus>>;
-        if options.port.eq_ignore_ascii_case("virtual") {
-            let bus = VirtualSignBus::new(iter::once(VirtualSign::new(Address(options.address))));
-            bus_rc = Rc::new(RefCell::new(bus));
-        } else {
-            let port = serial::open(&options.port)
-                .context(format!("Failed to open serial port `{}`", &options.port))?;
-            let bus = SerialSignBus::try_new(port).context("Failed to create bus")?;
-            bus_rc = Rc::new(RefCell::new(bus));
-        }
-
-        // TODO: Allow configuring the address and type (which will also require different ways of
-        // generating the output and possibly fonts to adapt to different sizes).
-        let sign = Sign::new(bus_rc.clone(), Address(options.address), SignType::Max3000Side90x7);
-        sign.configure().context("Failed to configure sign")?;
-
+    pub fn try_new(sign: Sign, use_24_hour: bool, show_day_of_week: bool) -> Result<Self> {
         Ok(Self {
-            options,
-            fonts: Fonts::try_new()?,
             sign,
+            fonts: Fonts::try_new()?,
+            use_24_hour,
+            show_day_of_week,
         })
     }
 
@@ -68,7 +47,7 @@ impl Clock {
 
         let mut page = self.sign.create_page(PageId(0));
 
-        let date_format = if self.options.show_day_of_week {
+        let date_format = if self.show_day_of_week {
             " %a\u{2009}%d"
         } else {
             " %b\u{2009}%d"
@@ -77,7 +56,7 @@ impl Clock {
         // Format the current time into string(s) and write to the page using BDF fonts.
         // This is all very specific to fitting nicely on the 90 x 7 sign.
         // TODO: Think about ways to clean up/generalize this.
-        if self.options.use_24_hour {
+        if self.use_24_hour {
             let time = now.format("%H:%M").to_string();
             let date = now.format(date_format).to_string().to_uppercase();
             let mut x_pos = 7;
