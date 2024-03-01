@@ -28,11 +28,11 @@ pub struct Options {
     #[structopt(short = "t", long = "24hour")]
     pub use_24_hour: bool,
 
-    /// Show day of week (WED 28) after the time instead of month (FEB 28)
+    /// Shows day of week (WED 28) after the time instead of month (FEB 28)
     #[structopt(short = "d", long = "dayofweek")]
     pub show_day_of_week: bool,
 
-    /// Show the current time and exit (suitable for use with cron, etc.)
+    /// Shows the current time and exits (suitable for use with cron, etc.)
     #[structopt(short = "o", long = "oneshot")]
     pub one_shot: bool,
 }
@@ -43,20 +43,19 @@ fn main() -> Result<()> {
     let options = Options::from_args();
     let address = Address(options.address);
 
-    let bus_rc: Rc<RefCell<dyn SignBus>>;
-    if options.port.eq_ignore_ascii_case("virtual") {
+    let bus: Rc<RefCell<dyn SignBus>> = if options.port.eq_ignore_ascii_case("virtual") {
         let bus = VirtualSignBus::new(iter::once(VirtualSign::new(address)));
-        bus_rc = Rc::new(RefCell::new(bus));
+        Rc::new(RefCell::new(bus))
     } else {
         let port = serial::open(&options.port)
             .context(format!("Failed to open serial port `{}`", &options.port))?;
         let bus = SerialSignBus::try_new(port).context("Failed to create bus")?;
-        bus_rc = Rc::new(RefCell::new(bus));
-    }
+        Rc::new(RefCell::new(bus))
+    };
 
     // TODO: Allow configuring the type (which will also require different ways of
     // generating the output and possibly fonts to adapt to different sizes).
-    let sign = Sign::new(bus_rc.clone(), address, SignType::Max3000Side90x7);
+    let sign = Sign::new(bus.clone(), address, SignType::Max3000Side90x7);
     sign.configure().context("Failed to configure sign")?;
 
     let clock = Clock::try_new(sign, options.use_24_hour, options.show_day_of_week)?;
