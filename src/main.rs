@@ -32,9 +32,9 @@ pub struct Options {
     #[structopt(short = "d", long = "dayofweek")]
     pub show_day_of_week: bool,
 
-     /// Show the current time and exit (suitable for use with cron, etc.)
-     #[structopt(short = "o", long = "oneshot")]
-     pub one_shot: bool,
+    /// Show the current time and exit (suitable for use with cron, etc.)
+    #[structopt(short = "o", long = "oneshot")]
+    pub one_shot: bool,
 }
 
 fn main() -> Result<()> {

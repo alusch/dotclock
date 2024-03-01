@@ -72,8 +72,12 @@ impl Clock {
             Self::write_string(&date, &self.fonts.main, &mut page, x_pos);
         }
 
-        self.sign.send_pages(&[page]).context("Failed to send page")?;
-        self.sign.show_loaded_page().context("Failed to show page")?;
+        self.sign
+            .send_pages(&[page])
+            .context("Failed to send page")?;
+        self.sign
+            .show_loaded_page()
+            .context("Failed to show page")?;
 
         Ok(())
     }
