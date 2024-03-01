@@ -31,6 +31,10 @@ pub struct Options {
     /// Show day of week (WED 28) after the time instead of month (FEB 28)
     #[structopt(short = "d", long = "dayofweek")]
     pub show_day_of_week: bool,
+
+     /// Show the current time and exit (suitable for use with cron, etc.)
+     #[structopt(short = "o", long = "oneshot")]
+     pub one_shot: bool,
 }
 
 fn main() -> Result<()> {
@@ -56,24 +60,28 @@ fn main() -> Result<()> {
     sign.configure().context("Failed to configure sign")?;
 
     let clock = Clock::try_new(sign, options.use_24_hour, options.show_day_of_week)?;
-   
-    // Capture the current time, but set the seconds and nanoseconds to 0.
-    // (This is safe to unwrap since 0 is a valid value). This becomes our initial target time.
-    let now = Local::now();
-    let even_minute = now.with_second(0).unwrap().with_nanosecond(0).unwrap();
 
-    // Set up recurring callbacks every minute, on the minute. Since our initial time is
-    // in the past by construction, this will always run immediately to show the current time.
-    // Then, regular updates occur on the minute, giving us proper clock-like operation.
-    // TODO: This won't be totally accurate since it doesn't account for the time to
-    // send the messages or for the sign to display them. Could add some smarts to
-    // try to tune that. For a basic clock though, that's probably overkill.
-    let (tx, rx) = channel();
-    let timer = MessageTimer::new(tx);
-    let _guard = timer.schedule(even_minute, Some(chrono::Duration::minutes(1)), ());
+    if options.one_shot {
+        clock.display_time()
+    } else {
+        // Capture the current time, but set the seconds and nanoseconds to 0.
+        // (This is safe to unwrap since 0 is a valid value). This becomes our initial target time.
+        let now = Local::now();
+        let even_minute = now.with_second(0).unwrap().with_nanosecond(0).unwrap();
 
-    loop {
-        rx.recv().context("Channel failure")?;
-        clock.display_time()?;
+        // Set up recurring callbacks every minute, on the minute. Since our initial time is
+        // in the past by construction, this will always run immediately to show the current time.
+        // Then, regular updates occur on the minute, giving us proper clock-like operation.
+        // TODO: This won't be totally accurate since it doesn't account for the time to
+        // send the messages or for the sign to display them. Could add some smarts to
+        // try to tune that. For a basic clock though, that's probably overkill.
+        let (tx, rx) = channel();
+        let timer = MessageTimer::new(tx);
+        let _guard = timer.schedule(even_minute, Some(chrono::Duration::minutes(1)), ());
+
+        loop {
+            rx.recv().context("Channel failure")?;
+            clock.display_time()?;
+        }
     }
 }
