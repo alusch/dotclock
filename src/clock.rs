@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use bdf::Font;
 use chrono::Local;
-use flipdot::{Page, PageId, Sign};
+use flipdot::{Page, PageFlipStyle, PageId, Sign};
 
 #[derive(Debug)]
 pub struct Fonts {
@@ -72,12 +72,15 @@ impl Clock {
             Self::write_string(&date, &self.fonts.main, &mut page, x_pos);
         }
 
-        self.sign
+        let flip_style = self
+            .sign
             .send_pages(&[page])
             .context("Failed to send page")?;
-        self.sign
-            .show_loaded_page()
-            .context("Failed to show page")?;
+        if flip_style == PageFlipStyle::Manual {
+            self.sign
+                .show_loaded_page()
+                .context("Failed to show page")?;
+        }
 
         Ok(())
     }

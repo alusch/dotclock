@@ -11,14 +11,14 @@ categories = ["command-line-utilities"]
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.44"
+anyhow = "1.0.80"
 bdf = "0.6.0"
-chrono = "0.4.19"
-env_logger = "0.9.0"
-flipdot = "0.6.0"
-flipdot-testing = "0.6.0"
+chrono = "0.4.34"
+env_logger = "0.11.2"
+flipdot = "0.7.0"
+flipdot-testing = "0.7.0"
 serial = "0.4.0"
-structopt = "0.3.25"
+structopt = "0.3.26"
 timer = "0.2.0"
 
 [profile.release]

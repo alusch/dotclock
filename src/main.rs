@@ -5,7 +5,7 @@ use std::sync::mpsc::channel;
 
 use anyhow::{Context, Result};
 use chrono::{Local, Timelike};
-use flipdot::{Address, SerialSignBus, Sign, SignBus, SignType};
+use flipdot::{Address, PageFlipStyle, SerialSignBus, Sign, SignBus, SignType};
 use flipdot_testing::{VirtualSign, VirtualSignBus};
 use structopt::StructOpt;
 use timer::MessageTimer;
@@ -44,7 +44,7 @@ fn main() -> Result<()> {
     let address = Address(options.address);
 
     let bus: Rc<RefCell<dyn SignBus>> = if options.port.eq_ignore_ascii_case("virtual") {
-        let bus = VirtualSignBus::new(iter::once(VirtualSign::new(address)));
+        let bus = VirtualSignBus::new(iter::once(VirtualSign::new(address, PageFlipStyle::Manual)));
         Rc::new(RefCell::new(bus))
     } else {
         let port = serial::open(&options.port)
@@ -56,7 +56,8 @@ fn main() -> Result<()> {
     // TODO: Allow configuring the type (which will also require different ways of
     // generating the output and possibly fonts to adapt to different sizes).
     let sign = Sign::new(bus.clone(), address, SignType::Max3000Side90x7);
-    sign.configure().context("Failed to configure sign")?;
+    sign.configure_if_needed()
+        .context("Failed to configure sign")?;
 
     let clock = Clock::try_new(sign, options.use_24_hour, options.show_day_of_week)?;
 
