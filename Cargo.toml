@@ -1,6 +1,6 @@
 [package]
 name = "dotclock"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["Adam Lusch <alusch@gmail.com>"]
 description = "Command-line tool to show a clock on a Luminator display"
 license = "MIT"
