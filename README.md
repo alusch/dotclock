@@ -4,7 +4,7 @@
 
 Command-line tool to show a clock on a Luminator display, written in Rust.
 
-![A real Luminator MAX3000 sign on a wooden shelf, showing "10:58 AM  FRI 22" using this crate](clock.jpg)
+![A real Luminator MAX3000 sign on a wooden shelf, showing '10:58 AM  FRI 22' using this crate](clock.jpg)
 
 At the moment, it's really only *my* Luminator display (a MAX3000 90 × 7 side sign), but it would be relatively easy to extend to different types of signs. If nothing else, it's a good example of how to use my [flipdot](https://github.com/alusch/flipdot) crate to do something useful.
 
