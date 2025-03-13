@@ -1,6 +1,6 @@
 [package]
 name = "dotclock"
-version = "0.6.0"
+version = "0.7.0"
 authors = ["Adam Lusch <alusch@gmail.com>"]
 description = "Command-line tool to show a clock on a Luminator display"
 license = "MIT"
@@ -8,18 +8,21 @@ repository = "https://github.com/alusch/flipdot"
 readme = "README.md"
 keywords = ["clock", "flip-dot", "Luminator", "bus", "sign"]
 categories = ["command-line-utilities"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-anyhow = "1.0.80"
-bdf = "0.6.0"
-chrono = "0.4.34"
-env_logger = "0.11.2"
-flipdot = "0.7.0"
-flipdot-testing = "0.7.0"
+anyhow = "1.0.97"
+chrono = "0.4.40"
+eg-bdf = { git = "https://github.com/embedded-graphics/embedded-bdf.git" }
+embedded-graphics = "0.8.1"
+env_logger = "0.11.7"
+flipdot-graphics = "0.1.0"
 serial = "0.4.0"
 structopt = "0.3.26"
 timer = "0.2.0"
+
+[build-dependencies]
+eg-font-converter = { git = "https://github.com/embedded-graphics/embedded-bdf.git" }
 
 [profile.release]
 lto = true

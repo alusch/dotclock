@@ -1,51 +1,54 @@
-use anyhow::{Context, Result};
-use bdf::Font;
+use anyhow::Result;
 use chrono::Local;
-use flipdot::{Page, PageFlipStyle, PageId, Sign};
+use eg_bdf::BdfTextStyle;
+use embedded_graphics::{
+    pixelcolor::BinaryColor,
+    prelude::*,
+    text::{Baseline, Text},
+};
+use flipdot_graphics::FlipdotDisplay;
+
+use crate::fonts::{FONT_AM_PM, FONT_MAIN, FONT_NUM_7X7};
 
 #[derive(Debug)]
 pub struct Fonts {
-    pub main: Font,
-    pub am_pm: Font,
-    pub num_7x7: Font,
+    pub main: BdfTextStyle<'static, BinaryColor>,
+    pub am_pm: BdfTextStyle<'static, BinaryColor>,
+    pub num_7x7: BdfTextStyle<'static, BinaryColor>,
 }
 
 #[derive(Debug)]
 pub struct Clock {
-    sign: Sign,
+    display: FlipdotDisplay,
     fonts: Fonts,
     use_24_hour: bool,
     show_day_of_week: bool,
 }
 
-impl Fonts {
-    const MAIN_DATA: &'static [u8] = include_bytes!("fonts/main.bdf");
-    const AM_PM_DATA: &'static [u8] = include_bytes!("fonts/am_pm.bdf");
-    const NUM_7X7_DATA: &'static [u8] = include_bytes!("fonts/num_7x7.bdf");
-
-    pub fn try_new() -> Result<Self> {
-        Ok(Self {
-            main: bdf::read(Self::MAIN_DATA).context("Failed to load main font")?,
-            am_pm: bdf::read(Self::AM_PM_DATA).context("Failed to load AM/PM font")?,
-            num_7x7: bdf::read(Self::NUM_7X7_DATA).context("Failed to load 7x7 number font")?,
-        })
+impl Default for Fonts {
+    fn default() -> Self {
+        Self {
+            main: BdfTextStyle::new(&FONT_MAIN, BinaryColor::On),
+            am_pm: BdfTextStyle::new(&FONT_AM_PM, BinaryColor::On),
+            num_7x7: BdfTextStyle::new(&FONT_NUM_7X7, BinaryColor::On),
+        }
     }
 }
 
 impl Clock {
-    pub fn try_new(sign: Sign, use_24_hour: bool, show_day_of_week: bool) -> Result<Self> {
-        Ok(Self {
-            sign,
-            fonts: Fonts::try_new()?,
+    pub fn new(display: FlipdotDisplay, use_24_hour: bool, show_day_of_week: bool) -> Self {
+        Self {
+            display,
+            fonts: Fonts::default(),
             use_24_hour,
             show_day_of_week,
-        })
+        }
     }
 
-    pub fn display_time(&self) -> Result<()> {
+    pub fn display_time(&mut self) -> Result<()> {
         let now = Local::now();
 
-        let mut page = self.sign.create_page(PageId(0));
+        self.display.clear(BinaryColor::Off)?;
 
         let date_format = if self.show_day_of_week {
             " %a\u{2009}%d"
@@ -59,51 +62,23 @@ impl Clock {
         if self.use_24_hour {
             let time = now.format("%H:%M").to_string();
             let date = now.format(date_format).to_string().to_uppercase();
-            let mut x_pos = 7;
-            x_pos = Self::write_string(&time, &self.fonts.num_7x7, &mut page, x_pos);
-            Self::write_string(&date, &self.fonts.main, &mut page, x_pos);
+            let next = Point::new(7, 0);
+            let next = Text::with_baseline(&time, next, self.fonts.num_7x7, Baseline::Top)
+                .draw(&mut self.display)?;
+            Text::new(&date, next, self.fonts.main).draw(&mut self.display)?;
         } else {
             let time = now.format("%_I:%M").to_string();
             let am_pm = now.format("%p").to_string();
             let date = now.format(date_format).to_string().to_uppercase();
-            let mut x_pos = 1;
-            x_pos = Self::write_string(&time, &self.fonts.num_7x7, &mut page, x_pos);
-            x_pos = Self::write_string(&am_pm, &self.fonts.am_pm, &mut page, x_pos);
-            Self::write_string(&date, &self.fonts.main, &mut page, x_pos);
+            let next = Point::new(1, 0);
+            let next = Text::with_baseline(&time, next, self.fonts.num_7x7, Baseline::Top)
+                .draw(&mut self.display)?;
+            let next = Text::new(&am_pm, next, self.fonts.am_pm).draw(&mut self.display)?;
+            Text::new(&date, next, self.fonts.main).draw(&mut self.display)?;
         }
 
-        let flip_style = self
-            .sign
-            .send_pages(&[page])
-            .context("Failed to send page")?;
-        if flip_style == PageFlipStyle::Manual {
-            self.sign
-                .show_loaded_page()
-                .context("Failed to show page")?;
-        }
+        self.display.flush()?;
 
         Ok(())
-    }
-
-    /// Writes the given `string` using the provided `font` into a `page`, starting at
-    /// the column given by `x_start`. Returns the column after the last one written to,
-    /// to facilitate using multiple calls to append different strings.
-    ///
-    /// Glyphs not present in `font` are ignored. Panics if it exceeds the dimensions of the page
-    /// (font is too tall or string is too long). Everything is top-aligned on the assumption
-    /// that the font will match the height of the page.
-    fn write_string(string: &str, font: &Font, page: &mut Page<'_>, x_start: u32) -> u32 {
-        let mut x_offset = x_start;
-        for codepoint in string.chars() {
-            if let Some(glyph) = font.glyphs().get(&codepoint) {
-                for y in 0..glyph.height() {
-                    for x in 0..glyph.width() {
-                        page.set_pixel(x_offset + x, y, glyph.get(x, y));
-                    }
-                }
-                x_offset += glyph.width();
-            }
-        }
-        x_offset
     }
 }

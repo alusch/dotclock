@@ -1,16 +1,13 @@
-use std::cell::RefCell;
-use std::iter;
-use std::rc::Rc;
 use std::sync::mpsc::channel;
 
 use anyhow::{Context, Result};
 use chrono::{Local, Timelike};
-use flipdot::{Address, PageFlipStyle, SerialSignBus, Sign, SignBus, SignType};
-use flipdot_testing::{VirtualSign, VirtualSignBus};
+use flipdot_graphics::{Address, FlipdotDisplay, SignBusType, SignType};
 use structopt::StructOpt;
 use timer::MessageTimer;
 
 mod clock;
+mod fonts;
 use clock::Clock;
 
 #[derive(StructOpt, Debug)]
@@ -41,25 +38,15 @@ fn main() -> Result<()> {
     env_logger::init();
 
     let options = Options::from_args();
-    let address = Address(options.address);
 
-    let bus: Rc<RefCell<dyn SignBus>> = if options.port.eq_ignore_ascii_case("virtual") {
-        let bus = VirtualSignBus::new(iter::once(VirtualSign::new(address, PageFlipStyle::Manual)));
-        Rc::new(RefCell::new(bus))
-    } else {
-        let port = serial::open(&options.port)
-            .context(format!("Failed to open serial port `{}`", &options.port))?;
-        let bus = SerialSignBus::try_new(port).context("Failed to create bus")?;
-        Rc::new(RefCell::new(bus))
-    };
-
-    // TODO: Allow configuring the type (which will also require different ways of
+    // TODO: Allow configuring the sign type (which will also require different ways of
     // generating the output and possibly fonts to adapt to different sizes).
-    let sign = Sign::new(bus.clone(), address, SignType::Max3000Side90x7);
-    sign.configure_if_needed()
-        .context("Failed to configure sign")?;
-
-    let clock = Clock::try_new(sign, options.use_24_hour, options.show_day_of_week)?;
+    let display = FlipdotDisplay::try_new(
+        SignBusType::from(&options.port),
+        Address(options.address),
+        SignType::Max3000Side90x7,
+    )?;
+    let mut clock = Clock::new(display, options.use_24_hour, options.show_day_of_week);
 
     if options.one_shot {
         clock.display_time()
